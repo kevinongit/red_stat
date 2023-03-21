@@ -1,0 +1,17 @@
+(2023/03/17)
+* TEST run (simMode : utilize ex_rawData.js )
+  http://localhost:8080/redstat?simMode=1&type=d1
+  http://localhost:8080/redstat?simMode=1&type=d1&genfile=1
+
+--- archived ---
+1. node
+  1) get json from redmine server (via chrome) : http://${REDMINE_SERVER}/redmine/proc_status_viewer/${TYPE}.json?key=key123
+  2) save it tp issues.json
+  3) run node
+    node ./test2.js # input : issues.json
+    ==> result : redmine_stat.html
+
+2. node
+  1) node ./server.js
+  2) connect to server : http://${STAT_SERVER}/redstat?type=t1&genfile=true
+
