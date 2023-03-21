@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<!--
+  (2022/05/16, kevin@bluedigm.com)
+-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RedStat</title>
+    <!-- <link rel="stylesheet" data-description="스타일 #1" href="../../assets/styles/commonStyles.css"> -->
+    <style>
+      .is-hidden {
+        display: none m !important;
+      }
+
+      .top-container {
+        display: block;
+        text-align: center;
+      }
+
+      .search {
+        padding: 10px 26px;
+        position: absolute;
+
+        color: #f1f1f1;
+        background: black;
+        z-index: 100;
+      }
+
+      .search input {
+        padding: 8px;
+        transition: width 0.2s;
+        -webkit-appearance: none;
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .sticky {
+        position: fixed;
+        top: 0;
+        width: 100%;
+      }
+
+      .sticky+.content {
+        padding-top: 102px;
+      }
+
+      .row {
+        margin: 0 -5px;
+      }
+
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      .column {
+        float: left;
+        width: 45%;
+        margin-bottom: 10px;
+        padding: 0 10px;
+      }
+
+      .onepiece {
+        min-width: none;
+      }
+
+      .cards {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+        height: 80px;
+        padding: 12px 26px;
+        opacity: 0.8;
+        transition: 0.3s;
+      }
+
+      .cards:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        /* background-color: whitesmoke; */
+        opacity: 1.4;
+      }
+
+      .grow-shadow {
+        display: inline-block;
+        vertical-align: middle;
+        -webkit-transform: perspective(1px) translateZ(0);
+        transform: perspective(1px) translateZ(0);
+        /* box-shadow: 0 0 1px rgba(0, 0, 0, 0); */
+        -webkit-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -webkit-transition-property: box-shadow, transform;
+        transition-property: box-shadow, transform;
+      }
+
+      .grow-shadow:hover,
+      .grow-shadow:focus,
+      .grow-shadow:active {
+        /* box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5); */
+        -webkit-transform: scale(1.1);
+        transform: scale(1.05);
+        background-color: whitesmoke;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .r1 {
+        display: flex;
+        align-items: center;
+        /* flex-direction: row;
+        justify-content: space-around; */
+      }
+
+      .col1 {
+        width: 85%;
+      }
+
+      .col2 {
+        width: 15%;
+      }
+
+      .icons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+      }
+
+      /* .item-ie {
+        background-color: lightcyan;
+      } */
+
+      /* for Table */
+      .guide_table {
+        border: 0.5px solid gray;
+        border-collapse: collapse;
+
+        width: 100%;
+        /* margin-left: auto;
+        margin-right: auto; */
+        border-spacing: 0px;
+        table-layout: fixed;
+      }
+
+      .guide_table th {
+        background: #35332c;
+        color: whitesmoke;
+        border-bottom: 0 none;
+      }
+
+      .guide_table td {
+        padding: 5px;
+        border: 1px solid #bfbfbf;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        /* text-align: center; */
+        word-wrap: break-word;
+        border-bottom: 1px solid #ddd;
+      }
+
+      /* tr:hover {
+        background-color: darkturquoise;
+      } */
+
+      .td-block-multi {
+        display: flex;
+        justify-content: space-around;
+        /* justify-content: flex-end; */
+      }
+
+      .td-edit {
+        align-self: center;
+      }
+
+      .td-button {
+        border: 0;
+        opacity: 0;
+      }
+
+      .td-block-multi:hover .td-button {
+        opacity: 1;
+        background-color: #ffaa40;
+      }
+
+      .trow {
+        /* float: left;
+        width: 90%; */
+        margin-bottom: 10px;
+        padding: 0 10px;
+      }
+
+      .tcards {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        /* height: 80px; */
+        width: 89%;
+        padding: 12px 26px;
+      }
+
+      .tcards:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      pre {
+        white-space: pre-wrap;
+        float: left;
+        /* display: block;
+        background: none;
+        font-family: monospace;
+        -webkit-overflow-scrolling: touch;
+        overflow-x: scroll;
+        max-width: 100%;
+        min-width: 100px;
+        padding: 0; */
+      }
+
+      /* code {
+        text-align: left;
+      } */
+      .status2 {
+        height: 25px;
+        width: 25px;
+        border-radius: 50%;
+        background-color: #bbb;
+        display: inline-block;
+      }
+
+      .status {
+        background: #e3e3e3;
+        border-radius: 50%;
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
+        color: #6e6e6e;
+        display: inline-block;
+        font-weight: bold;
+        line-height: 30px;
+        margin-right: 5px;
+        text-align: center;
+        width: 30px;
+      }
+
+      .issue1-button {
+        background-color: #04aa04;
+        border: none;
+        border-radius: 10%;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+
+      .issue1-disabled-button {
+        background-color: gray;
+        border: none;
+        border-radius: 10%;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: none;
+      }
+
+      .issue2-button {
+        background-color: beige;
+        border: none;
+        border-radius: 50%;
+        color: black;
+        width: 32px;
+        height: 32px;
+        padding: 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+
+      .issue-clear {
+        font-size: 24px;
+      }
+
+      .progress {
+        width: 80%;
+        background-color: #ddd;
+      }
+
+      .bar {
+        /* width: 10%;
+        height: 30px; */
+        background-color: cyan;
+        color: white;
+        padding: 1%;
+        text-align: right;
+        font-size: 12px;
+        /* border-radius: 15px; */
+      }
+
+      .subtitle {
+        margin-left: 25px;
+      }
+
+      /* for modal */
+      .modal {
+        display: none;
+        /* hidden by default */
+        position: fixed;
+        /* stay in place */
+        z-index: 1;
+        /* Sit on top */
+        /* padding-top: 5%; */
+        /* location of the box  */
+        left: 0;
+        top: 0;
+        /* full width  */
+        width: 100%;
+        /* full height  */
+        height: 100%;
+        /* enable scroll if needed */
+        overflow: auto;
+        /* fallback color  */
+        background-color: rgb(0, 0, 0);
+        /* black w/ opacity  */
+        background-color: rgba(0, 0, 0, 0.4);
+        box-sizing: border-box;
+        overflow-y: initial !important;
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        margin-top: 50px;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        height: 80vh;
+        overflow-y: auto;
+      }
+
+      .close  {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .btnContainer {
+        margin-left: 20px;
+      }
+
+      .btn {
+        border: none;
+        outline: none;
+        padding: 12px 16px;
+        background-color: #f1f1f1;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background-color: #ddd;
+      }
+
+      .btn.active {
+        background-color: #666;
+        color: white;
+      }
+
+      @media screen and (max-width: 600px) {
+        .column {
+          width: 95%;
+          display: block;
+          margin-bottom: 10px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="stem">
+
+      <div  class="top-container">
+        <h2>가나다라 프로젝트 구축 [ TYPE_HERE ] </h2>
+      </div>
+
+      <div id="btnContainer" class="btnContainer">
+        <button class="btn ALL_BUTTON" onclick="filterCategory('all')"><b>전체 &#8635; &#9203;</b></button>
+        <button class="btn SBANG_BUTTON" onclick="filterCategory('sbang')"><b>스뱅 </b></button>
+        <button class="btn INBANG_BUTTON" onclick="filterCategory('inbang')"><b>인뱅 </b></button>
+      </div>
+      <!-- <div class="search" id="search">
+        <label for="searchbox">Search</label>
+        <input type="search" oninput="liveSearch()" id="searchbox" />
+      </div>
+      <br> -->
+
+      <div class="content">
+        <div id="root">use chrome or edge...</div>
+        <div id="detailModal" class="modal">
+          <div class="modal-content">
+            <span class="close" onclick="hideModal()">&times;</span>
+            <div id="detailTable"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div id="snackbar">
+      Hello Snackbar!
+    </div> -->
+  </body>
+  <script>
+    function categoryButton() {
+      let btns = document.getElementById('btnContainer').getElementsByClassName('btn')
+      // console.log(btns)
+      for (let i=0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function() {
+          let current = document.getElementsByClassName('active')
+          current[0].className = current[0].className.replace(" active", "")
+          this.className += " active"
+        })
+      }
+    }
+
+    function filterCategory(category) {
+      let filter = ''
+
+      switch (category) {
+        case 'sbang':
+          filter = '&filter=스타뱅킹'
+          break;
+        case 'inbang':
+          filter = '&filter=인터넷뱅킹'
+          break;
+        case 'all':
+        default:
+          break;
+      }
+
+      window.localStorage = `http://REDSTAT_IPADDR/redstat?genfile=true&type=TARGET_TYPE${filter}`
+
+      // let xhttp = new XMLHttpRequest()
+      // xhttp.onreadystatechange = function() {
+      //   if (this.readyState == 4 && this.status == 200) {
+      //     // document.innerHTML = this.responseText
+      //     document.write(this.responseText)
+      //     document.close()
+      //     showAllIssue('big', ['open', 'inProgress', 'reopen'])
+      //     showAllIssue('small', ['open', 'inProgress', 'reopen', 'inReview', 'underReview'])
+      //   }
+      // }
+      // const url = `http://10.2..26.177:8080/redstat?genfile=true&type=t1${filter}`
+      // xhttp.open('GET', url)
+      // xhttp.send()
+    }
+
+    function getCurrentBrowser(userAgent) {
+      // (22/05/17) below three will suffice for now, add more browser if you want to. default is definitely Chrome.
+      // IE - "rv" : Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0 50727; ... rv:11.0) Gecko
+      // Edge - "Edg" : Mozilla/5.0 ... Edg/91.0.864.64
+      // Chrome - "Chrome" : Mozilla/5.0 ...Chrome/70.0.3507.0 ...
+      const browser = userAgent.indexOf('rv') > -1 || userAgent.indexOf("MSIE") > -1 ? "ie" : 
+      (
+        userAgent.indexOf('Edg') > -1 ? "edge" : "chrome"
+      )
+      // console.log({browser, userAgent})
+      return browser
+    }
+
+    function getPriorityColor(priority = 'Minor') {
+      const color = priority === 'Critical' ? 'red' : (priority === 'Major' ? 'yellow' : 'white')
+      return color
+    }
+
+    /// set main TR's static cells rowspan
+    /// 1) main TR has an id attribute
+    /// 2) static cells : main TR's TDs [0 ~ 6]
+    function setTrRowspan(tr, rowspan) {
+      if (!tr) return
+      const tds = tr.cells
+      const staticTdCount = tds.length - 2 // excluding last two columns - status[7] and issues[8]
+      if (staticTdCount <= 0) return
+      for (let i=0; i < staticTdCount; i++) {
+        tds[i].setAttribute('rowspan', `${rowspan}`)
+      }
+      tds[staticTdCount].innerHTML = `<span class="issue-clear">&#128584;</span>`
+      console.log(`setTrRowspan(tr [${tr.rowIndex}]) : ${rowspan}`)
+    }
+
+    function getTrStartIndexAndLength(table, tr=null) {
+      console.log('>>> tr', tr)
+      if (!tr) {
+        /// fallback : all rows(tr)
+        return {
+          startIndex: 0, /// the start index for first tr
+          length: table.rows.length - 1, /// the number of empty tr in range(same group)
+        }
+      }
+      let length=0
+      for (let i=tr.rowIndex+1; i < table.rows.length; i++) {
+        if (table.rows[i].id !== '') break /// non-empty id is the signal of another group
+        length++
+      }
+      return {
+        startIndex: tr.rowIndex,
+        length,
+      }
+    }
+
+    function deleteEmptyTr(table, startIndex, length) {
+      /// 1.only empty trs will be deleted
+      /// 2.each empty tr should be deleted in reverse order
+      for (let i=startIndex+length; i >= startIndex; i--) {
+        if (table.rows[i].id === '') {
+          console.log(`- row(${i}) deleted`)
+          table.deleteRow(i)
+        } else {
+          /// rowspan should be initialized due to the deleteRow()
+          setTrRowspan(table.rows[i], 1)
+        }
+      }
+    }
+
+    function initTableRow2(prefix, idx=null) {
+      const table = document.getElementById(`${prefix}-table`)
+      const tr = (idx !== null) ? document.getElementById(`${prefix}_tr_${idx}`) : null
+
+      console.log({prefix, idx, table})
+      const {startIndex, length} = getTrStartIndexAndLength(table, tr)
+      console.log({ startIndex, length })
+      deleteEmptyTr(table, startIndex, length)
+    }
+
+    function showAllIssue(prefix, keys) {
+      const records = prefix === 'small' ? currentRequestList : currentIssueList
+      console.log(`records.length=`, {records})
+      // initTableRow2(prefix)
+
+      records.map((record, idx) => {
+        showIssueWithInit(prefix, idx, keys)
+      })
+    }
+
+    function showIssueWithInit(prefix, idx, key) {
+      initTableRow2(prefix, idx)
+      showIssue(prefix, idx, key)
+    }
+    function showIssue(prefix, idx, key) {
+      const DELAY_REDLINE = 4
+      const DELAY_YELLOWLINE = 1
+      function getColorByDelayedDay(delayedDay) {
+        const bgColor = delayedDay > DELAY_REDLINE ? 'red' : (delayedDay > DELAY_YELLOWLINE ? 'yellow' : (delayedDay > 0 ? 'aqua' : 'violet'))
+        const textColor = (bgColor === 'red' || bgColor === 'violet') ? 'white' : (bgColor === 'yellow' ? 'gray' : 'orange')
+
+        return {bgColor, textColor}
+      }
+      function getStatusCircleHtml(dayNum) {
+        const {bgColor, textColor} = getColorByDelayedDay(dayNum)
+
+        return `<span class="status" style="background-color: ${bgColor}; font-size: 0.8rem; color: ${textColor}; vertical-align: middle; text-align: center;">${dayNum}d</span>`
+      }
+
+      const tableTarget = document.getElementById(`${prefix}-table`)
+      // const statusTarget = document.getElementById(`${prefix}_${idx}_status`)
+
+      const tr = document.getElementById(`${prefix}_tr_${idx}`)
+      const { startIndex, length: trLength} = getTrStartIndexAndLength(tableTarget, tr)
+
+      if (!key || !key.length) {
+        const issuestarget = document.getElementById(`${prefix}_${idx}_issues`)
+        issuestarget.innerHTML = `<span class="issue-clear">&#128584;</span>`
+        return
+      }
+      const records = prefix === 'small' ? currentRequestList : currentIssueList
+      const list = Array.isArray(key) ? key.flatMap(k => records[idx][k]) : records[idx][key]
+      const rowspan = list.length || 1 /// static tds rowspan value determined by dynamic tds
+
+      console.log('*****', {list, startIndex, trLength, rowspan})
+      setTrRowspan(tr, rowspan)
+
+      // statusTarget.innerHTML = list.map(({item}) => {
+      //   return (
+      //     `${getStatusCircleHtml(item.dayNum)}`
+      //   )
+      // })
+
+      const dynamicRowHtml = list.length ? list.map(({
+        num,
+        title,
+        item,
+      }, jdx) => {
+        const priorityColor = getPriorityColor(item.priority)
+        const strItem = JSON.stringify(item)
+        const encoded = btoa(unescape(encodeURIComponent(strItem)))
+        // const decoded = decodeURIComponent(escape(atob(encoded)))
+        // const item2 = JSON.parse(decoded)
+
+        let cell1, cell2
+        if (jdx <= trLength) {
+          // cell1 = document.getElementById(`${prefix}_${idx}_status`)
+          // cell12= document.getElementById(`${prefix}_${idx}_issues`)
+
+          /// 22.12.09 - calculate the cell1 id by getting cellLen instead of assuming the status idx as 7. (7 part is very static and not a good idea)
+          const cellLen = tableTarget.rows[tr.rowIndex + jdx].cells.length - 1
+          const cellIdx = (jdx === 0) ? cellLen - 1 : 0
+          // cell1 = tr.cells[cellIdx]
+          // cell2 = tr.cells[cellIdx+1]
+          console.log('+++++', tableTarget.rows[tr.rowIndex + jdx].cells)
+          cell1 = tableTarget.rows[tr.rowIndex + jdx].cells[cellIdx]
+          cell2 = tableTarget.rows[tr.rowIndex + jdx].cells[cellIdx + 1]
+          console.log({rowIndex: tr.rowIndex, jdx, cellIdx, cell1, cell2})
+        } else {
+          console.log(`+ row(${startIndex+jdx}) inserted`, {idx, jdx, startIndex, })
+          const row = tableTarget.insertRow(startIndex+jdx)
+          cell1 = row.insertCell(0)
+          cell2 = row.insertCell(1)
+
+          cell1.setAttribute("style", "text-align: center; word-break: break-all;")
+        }
+
+        cell1.innerHTML = `
+          ${getStatusCircleHtml(item.dayNum)}
+        `
+
+        const divChar = item.channelDivId || item.divisionCharacter  /// FIXME
+        cell2.innerHTML = `
+          <td>
+            <div style="display: flex; justify-content: flex-left; text-align: left; margin-left: 10px; align-items: center;">
+              <div style="background-color: ${priorityColor};">
+                <a title="레드마인(${divChar}:${num}) 으로 이동" style="width: 4rem;" href="http://REDMINE_IPADDR/redmine/issues/${num}" target="_blank"> ${divChar}:${num}</a>
+                <a title="상세보기" href="javascript:showModal('${encoded}')">${title} &nbsp;</a>
+              </div>
+            </div>
+          </td>
+        `
+      }).join("") : `<span class="issue-clear">&#127881;</span>`
+    }
+
+    function showModal(encoded) {
+      const decoded = decodeURIComponent(escape(atob(encoded)))
+      const item = JSON.parse(decoded)
+      // console.log({encoded, decoded, item})
+      const modal = document.getElementById('detailModal')
+      const html = getDetailTable(item)
+      console.log({modal, html})
+      // modal.innerHTML = html
+      const table = document.getElementById('detailTable')
+      table.innerHTML = html
+      modal.style.display = 'block'
+    }
+
+    function hideModal() {
+      const modal = document.getElementById('detailModal')
+      modal.style.display = 'none'
+    }
+    // When the user clicks anywhere outside modal, close it
+    window.onclick = function(event) {
+      const modal = document.getElementById('detailModal')
+      if (event.target == modal) {
+        modal.style.display = 'none'
+      }
+    }
+
+    function getDetailTable(item) {
+      
+      function makeRow(key, value, opt={}) {
+        let tagStart='', tagEnd=''
+        if (opt.pre) {
+          tagStart = '<pre>'
+          tagEnd = '</pre>'
+        }
+        return `
+          <tr>
+            <td style="text-align: center;">
+              ${key}
+            </td>
+            <td>
+              ${tagStart}${value}${tagEnd}
+            </td>
+          </tr>
+        `
+      }
+
+      function getHistoryHtml(param=[]) {
+        const history = param.filter((v,i,a) => a.findIndex(v2 => (v2.change_date === v.change_date)) === i) // remove duplicate change_date
+        return history.map(item => {
+          return `
+            <small style="background-color: whitesmoke;"><i> ${item.change_date} : ${item.translated} </i> </small> <br><br>
+            <small style="white-space: pre-wrap;">${item.note}</small> <hr>
+          `
+        }).join('')
+      }
+
+      
+
+      // if (!item.title || !item.title.length) return 'NONO'
+      
+      // delete item['title']
+      
+      const keys = Object.keys(item)
+      let table = `
+        <div class='onepiece'>
+          <div class='trow'>
+            <table class='guide_table'>
+              <tr>
+                <th width='30%' style='text-align: center;'>구분</th>
+                <th width='70%'>내용</th>
+              </tr>
+      `
+      const nvl = val => val || 'N/A';
+      table += makeRow('설명', nvl(item.description), {pre: true} )
+        + makeRow('등록자', nvl(item.author))
+        + makeRow('등록일', nvl(item.reg_date))
+        + makeRow('담당자', nvl(item.current_worker))
+        + makeRow('이력', getHistoryHtml(item.history_list))
+        + `
+              </table>
+            </div>
+          </small>
+        `
+
+      const priorityColor = getPriorityColor(item.priority)
+      return `
+        <h3>상세정보</h3>
+        &#9989; 일감 : <a style='background-color: ${priorityColor}' title='Move to Redmine' href='http://REDMINE_IPADDR/redmine/issues/${item.issue_number}' target="_blank">${item.channelDivId || item.divisionCharacter}${item.issue_number} ${item.subject}</a>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp; #${item.channel_div} #${item.product_div} #${item.issue_kind} #${item.priority} #${item.current_status}
+        ${table}
+      `
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const browser = getCurrentBrowser(window.navigator.userAgent)
+      console.log(browser)
+      if (browser === 'ie') {
+        alert('chrome or edge plz..')
+        window.close()
+      }
+
+      showAllIssue('big', ['open', 'inProgress', 'reopen'])
+      showAllIssue('small', ['open', 'inProgress', 'reopen', 'inReview', 'underReview'])
+    })
+
+    categoryButton()
+  </script>
+
+  <script>
+    // let fixed = document.getElementById('search')
+    // let sticky = fixed.offsetTop
+    // window.onscroll = function() {
+    //   if (window.pageYOffset > sticky) {
+    //     fixed.classList.add('sticky')
+    //   } else {
+    //     fixed.classList.remove('sticky')
+    //   }
+    // }
+    // let timer
+    // let interval = 500
+    // let searchInput = document.getElementById('searchbox')
+
+    // searchInput.addEventListener('keyup', () => {
+    //   clearTimeout(timer)
+    //   timer = setTimeout(liveSearch, interval)
+    // })
+    // document.getElementById('searchbox').focus()
+
+    // function liveSearch() {
+    //   let cards = document.querySelectorAll('.onepiece')
+    //   let query = document.getElementById('searchbox').value
+
+    //   // todo : found = 0 "No results found!"
+    //   console.log(cards)
+    //   for (let i=0; i < cards.length; i++) {
+    //     if (cards[i].innerText.toLowerCase().includes(query.toLowerCase())) {
+    //       // console.log('include')
+    //       cards[i].classList.remove('is-hidden')
+    //     } else {
+    //       // console.log('not include')
+    //       cards[i].classList.add('is-hidden')
+    //     }
+    //   }
+    // }
+
+    // function copyToClipboard(sourceId) {
+    //   const text = document.querySelector(`#${sourceId}`)
+
+    //   console.log({ text })
+    //   navigator.clipboard.writeText(text.innerText)
+    //   console.log(`${text.innerText} copied`)
+    // }
+
+    // function copyToClipboardByValue(value) {
+    //   navigator.clipboard.writeText(value)
+    //   console.log(`${value} copied`)
+    // }
+
+    const root = document.getElementById('root')
+    let bigRecords = 'BIG_RECORDS'
+    let smallRecords = 'SMALL_RECORDS'
+    let contents = `CONTENT_HERE`
+    // contents += '<div class="row">' + getTable(header, testCustomers.data) + '</div>'
+
+    let currentIssueList = bigRecords
+    let currentRequestList = smallRecords
+
+    root.innerHTML = contents
+  </script>
+  
+</html>
