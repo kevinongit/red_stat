@@ -1,0 +1,1 @@
+sc create REDSTAT binpath="c:\Users\S018310\AppData\Roaming\npm\node.exe C:\mylab\http2\imported\xfer\server.js" displayName="RED_STAT" start=auto type=own
