@@ -1,4 +1,5 @@
 // let form = new URLSearchParams()
+// const REDMINE_HOST = '10.2.26.211'
 const http = require('http')
 const url = require('url')
 const fs = require('fs')
@@ -7,11 +8,11 @@ const topdir = process.cwd() + "/archive"
 const genStat = require('./main')
 const util = require('./util')
 
+let CachedProcStatus = {}
+
 if (!fs.existsSync(topdir)) {
   fs.mkdirSync(topdir)
 }
-
-let cachedProcStatus = {}
 
 const ext = path.extname('index.html')
 
@@ -45,6 +46,18 @@ function getIpaddr2() {
     .map(({ address }) => address)
   return ipaddr
 }
+
+function getLogStream(logdir="logs") {
+  if (!fs.existSync(logdir)) {
+    fs.mkdirSync(logdir)
+  }
+  const fname = `${logdir}/rslog_${util.timestamp().slice(0,5).replace('-', '')}.log`;
+  console.log(`logfile : ${fname}`);
+
+  return fs.createWriteStream(`${fname}`, {flags: 'a' })
+}
+
+
 
 function getRedmineData(rmHost, {type= 't1', simMode= false, filter= undefined}) {
   console.log({type, simMode, filter })
@@ -86,14 +99,19 @@ function getRedmineData(rmHost, {type= 't1', simMode= false, filter= undefined})
   })
 }
 
+const logStream = getLogStream()
+
 http.createServer(async (req, res) => {
   try {
+    const config = await require('./loadConfig').getConfig()
+    console.log({config})
+    
     const reqUrl = url.parse(req.url).pathname
     const params = JSON.parse(JSON.stringify(url.parse(req.url, true).query)) // fix [Object: null prototype]
-    const {type, filter, genfile} = params
     const decodeUrl = decodeURIComponent(reqUrl)
     // const req_url = decodeURIComponent(req.url).replace(/\/+/g, '/')
 
+    const {type, filter, genfile} = params
     console.log({params})
 
     // const newParams = new URL(req.url, `http://localhost:${port}/redstat)
@@ -101,6 +119,9 @@ http.createServer(async (req, res) => {
 
     console.log({time: new Date().toLocaleString(), from: req.socket.remoteAddress})
     console.log({r_url: req.url, reqUrl, decodeUrl})
+
+    logStream.write(`o ${util.timestamp().slice(6)} - request from ${req.socket.remoteAddress} [ ${decodeUrl}, ${JSON.stringify(params)} ]\n`)
+
     if (reqUrl === '/redstat') {
       // loadRedmineData(res, params)
       const redmineHost = '0.0.0.0:8081'
@@ -164,6 +185,7 @@ http.createServer(async (req, res) => {
   // ipaddr = await getIpaddr()
   ipaddr = getIpaddr2()
   console.log(`*server is running on port http://${ipaddr + ':' + port}`)
+  logStream.write(`* ${util.timestamp().slice(6)} - server is running on http://${ipaddr + ':' + port} \n`)
   console.log({ipaddr, topdir, ext})
 })
 
