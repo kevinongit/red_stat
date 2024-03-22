@@ -179,7 +179,7 @@ function analyze(list=[]) {
     const issue = item['issue_number']
     const kind = item['issue_kind']
     const regiDay = nnDate(item['due_date'], item['reg_date'])
-    const { dayStr, dayNum } = getDayInfoFromBizdays(uti.getBizDaysBetween(regiDay, new Date()))
+    const { dayStr, dayNum } = getDayInfoFromBizdays(util.getBizDaysBetween(regiDay, new Date()))
     const divisionCharacter = item.channel_div === '인터넷뱅킹' ? 'i' : (item.channel_div === '스타뱅킹' ? 's' : '#')
     let name
 
