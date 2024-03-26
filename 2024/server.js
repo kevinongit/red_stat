@@ -48,7 +48,7 @@ function getIpaddr2() {
 }
 
 function getLogStream(logdir="logs") {
-  if (!fs.existSync(logdir)) {
+  if (!fs.existsSync(logdir)) {
     fs.mkdirSync(logdir)
   }
   const fname = `${logdir}/rslog_${util.timestamp().slice(0,5).replace('-', '')}.log`;
@@ -184,7 +184,7 @@ http.createServer(async (req, res) => {
   // ipaddr = 'localhost'
   // ipaddr = await getIpaddr()
   ipaddr = getIpaddr2()
-  console.log(`*server is running on port http://${ipaddr + ':' + port}`)
+  console.log(`* server is running on port http://${ipaddr + ':' + port}`)
   logStream.write(`* ${util.timestamp().slice(6)} - server is running on http://${ipaddr + ':' + port} \n`)
   console.log({ipaddr, topdir, ext})
 })
