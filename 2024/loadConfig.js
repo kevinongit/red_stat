@@ -11,7 +11,7 @@ function getConfig() {
       input: fs.createReadStream(file),
     })
     
-    rl.on('line', function(faw) {
+    rl.on('line', function(raw) {
       const line = raw.split('#')[0].trim()
       const [key, value] = line.split('=')
       if (!key || !value) {
