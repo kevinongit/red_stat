@@ -67,8 +67,8 @@ function getRedmineData(rmHost, {type= 't1', simMode= false, filter= undefined})
       let data = (require('./ex_rawData'))
       // console.log(data.data)
       resolve(data.data.proc_status)
-    } else if (filter && cachedProcStatus[type] && cachedProcStatus[type].length) {
-      const filteredProcStatus = cachedProcStatus[type].filter(e => e.channel_div === filter)
+    } else if (filter && CachedProcStatus[type] && CachedProcStatus[type].length) {
+      const filteredProcStatus = CachedProcStatus[type].filter(e => e.channel_div === filter)
   
       console.log('[filteredProcStatus]', filteredProcStatus.length)
       resolve(filteredProcStatus)
@@ -85,8 +85,8 @@ function getRedmineData(rmHost, {type= 't1', simMode= false, filter= undefined})
           const result = JSON.parse(data)
           console.log({result})
           /// Cache result.proc_status for filtering : all / inbang / sbang
-          cachedProcStatus[type] = result.proc_status
-          console.log('22222', cachedProcStatus[type] && cachedProcStatus[type].length)
+          CachedProcStatus[type] = result.proc_status
+          console.log('22222', CachedProcStatus[type] && CachedProcStatus[type].length)
           
           resolve(result.proc_status)
           
