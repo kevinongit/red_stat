@@ -8,6 +8,8 @@ const server = http.createServer(app)
 const crypto = require('crypto')
 const randomId = () => crypto.randomBytes(8).toString("hex")
 
+/// Mock data
+const data = require('../ex_rawData')
 
 // app.use(express.json())
 app.use(bodyParser.json())
@@ -25,18 +27,31 @@ app.get('/redmine/proc_status_viewer/:projectId', async (req, res) => {
   try {
     const projectId = req.params.projectId
     console.log('projectId', projectId)
-    const data = require('../ex_rawData')
-    if (projectId === 'd1.json') {
+    if (projectId === 't1.json') {
       res.status(200).json(data.data)
       // res.status(200).json({success: true, message: "Good to go"})
     } else {
       console.log(`unknown (${projectId})`)
-      return res.status(404).json({ message: `not found(${projectId}).`})
+      return res.status(404).json([])
     }
 
   } catch (error) {
     console.log(error)
-    res.status(401).send(error.message)
+    res.status(401).json([])
+  }
+})
+
+app.get('/redmine/issues/:issueNo', async (req, res) => {
+  try {
+    const issueNo = Number(req.params.issueNo)
+    console.log({issueNo})
+    const issue = data.data.proc_status.find(ele => ele.issue_number === issueNo) || {mesg: `Not found (${issueNo})`}
+
+    res.status(200).json(issue)
+
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({error: error.message})
   }
 })
 
