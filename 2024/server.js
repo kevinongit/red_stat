@@ -85,10 +85,10 @@ function getRedmineData(rmHost, {type= 't1', simMode= false, filter= undefined})
           const result = JSON.parse(data)
           console.log({result})
           /// Cache result.proc_status for filtering : all / inbang / sbang
-          CachedProcStatus[type] = result.proc_status
+          CachedProcStatus[type] = result.proc_status || []
           console.log('22222', CachedProcStatus[type] && CachedProcStatus[type].length)
           
-          resolve(result.proc_status)
+          resolve(result.proc_status || [])
           
         })
       }).on('error', (err) => {
@@ -126,9 +126,9 @@ http.createServer(async (req, res) => {
       // loadRedmineData(res, params)
       const redmineHost = '0.0.0.0:8081'
 
-      let proc_status = await getRedmineData(redmineHost, params)
+      let proc_status = await getRedmineData(redmineHost, config)
       console.log({proc_status})
-      let html = genStat.genStat(proc_status, redmineHost)
+      let html = genStat.generateReportHtml(proc_status, config)
       html = html.replace('TYPE_HERE', type === 'd1' ? '개발' : (type === 't1' ? '단테' : (type === 't2' ? '통테' : (type === 't3' ? '인수' : '운영' )) ))
       html = html.replace(' INBANG_BUTTON', filter && filter.includes('인터넷뱅킹') ? " active" : "")
       html = html.replace(' SBANG_BUTTON', filter && filter.includes('스타뱅킹') ? " active" : "")
