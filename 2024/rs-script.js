@@ -180,7 +180,7 @@ function showIssue(prefix, idx, key) {
     }
 
     cell1.innerHTML = `
-        ${getStatusCircleHtml(item.dayNum)}
+        ${htmlStatusCircle(item.dayNum, item.dueDate, item.isActive)}
       `
 
     const divChar = item.channelDivId || item.divisionCharacter  /// FIXME
@@ -190,7 +190,7 @@ function showIssue(prefix, idx, key) {
           <div style="display: flex; justify-content: flex-left; text-align: left; margin-left: 10px; align-items: center;">
             <color-dot ${item.priority}> </color-dot>
             <div ${bgStyle}>
-              <a title="레드마인(${divChar}:${num}) 으로 이동" style="width: 4rem;" href="http://REDMINE_IPADDR/redmine/issues/${num}" target="_blank"> ${divChar}:${num}${title} [${item.autho}] &nbsp; </a>
+              <a title="레드마인(${divChar}:${num}) 으로 이동" style="width: 4rem;" href="http://REDMINE_IPADDR/redmine/issues/${num}" target="_blank"> ${divChar}:${num}${title} [${item.author}] </a>
             </div>
           </div>
         </td>
@@ -321,4 +321,3 @@ document.addEventListener('DOMContentLoaded', () => {
   showAllIssue('small', ['open', 'inProgress', 'reopen', 'inReview', 'underReview'])
   categoryButton()
 })
-
