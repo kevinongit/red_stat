@@ -456,6 +456,7 @@ function htmlTableBody(prefix, caption, header, records) {
       }
       const needLink = Array.isArray(record[key]) && record[key].length > 0 
       let text = WorkletStatus.hasOwnProperty(key) ? record[key].length : (record[key] || 'TODO')
+      // console.log({key, record: record[key], text})
       const copiable = undefined
 
       const tdId = `${prefix}_${idx}_${key}`
@@ -509,7 +510,7 @@ function generateReportHtml(orgList, configOpts) {
     return (b.open.length + b.inProgress.length + b.reopen.length) - (a.open.length + a.inProgress.length + a.reopen.length)
   }
 
-  const {redmineHost=RedmineHost, concatImprovement=false, yieldMembers} = configOpts
+  const {redmineHost=RedmineHost, concatImprovement=false, yieldMembers=[]} = configOpts
   const {
     status,
     defectStatus,
@@ -519,7 +520,7 @@ function generateReportHtml(orgList, configOpts) {
     delayList
   } = analyze(orgList)
 
-  console.log({redmineHost, concatImprovement})
+  console.log({records, records2})
   const bigPrefix = 'big'
   const smallPrefix = 'small'
 
@@ -606,7 +607,7 @@ function generateReportHtml(orgList, configOpts) {
   let html = generateTemplateHtml()
 
   html = html.replace(/REDMINE_IPARRD/g, redmineHost)
-  html = html.replace(/REDSTAT_IPADDR/g, '1.2.3.4')
+  html = html.replace(/REDSTAT_IPADDR/g, '0.0.0.0:8081')
   html = html.replace('CONTENT_HERE', statusContent + contents)
 
   html = html.replace("'BIG_RECORDS'", JSON.stringify(bigRecords))
